@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:shared/utils/colors_app.dart';
 
 class GithubApps extends StatelessWidget {
   const GithubApps({super.key});
@@ -10,6 +11,7 @@ class GithubApps extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routeInformationParser: Modular.routeInformationParser,
       routerDelegate: Modular.routerDelegate,
+      theme: ColorsApp.theme,
     );
   }
 }

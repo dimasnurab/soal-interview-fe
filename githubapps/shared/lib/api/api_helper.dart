@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
+import 'api_exception.dart';
+
 enum MethodApiHelper { POST, GET, DELETE, PUT }
 
 class ApiHelper {
@@ -56,7 +58,27 @@ class ApiHelper {
         cancelToken: cancelToken ?? _cancelToken,
       );
     } on DioException catch (e) {
-      throw e;
+      final statusCode = e.response?.statusCode;
+
+      switch (statusCode) {
+        case 401:
+          throw UnauthorizedException(
+            message: e.response?.statusMessage ?? "Unauthorized",
+          );
+        case 404:
+          throw NotFoundException(
+            message: e.response?.statusMessage ?? "Not Found",
+          );
+        case 500:
+          throw InternalServerException(
+            message: e.response?.statusMessage ?? "Internal Server Error",
+          );
+        default:
+          throw ApiException(
+            e.response?.statusMessage ?? "unknown error",
+            statusCode: statusCode,
+          );
+      }
     }
   }
 }

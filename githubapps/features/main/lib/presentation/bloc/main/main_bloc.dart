@@ -13,8 +13,22 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     on<MainEvent>((event, emit) async {
       if (event is ChangeBottomIndex) {
         await _mapChangeIndexToState(event, emit);
+      } else if (event is ChangeStatusState) {
+        _mapChangeStatusToState(event, emit);
       }
     });
+  }
+
+  void _mapChangeStatusToState(
+    ChangeStatusState event,
+    Emitter<MainState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        statusState: event.value,
+        isRefreshObject: !state.isRefreshObject,
+      ),
+    );
   }
 
   Future<void> _mapChangeIndexToState(

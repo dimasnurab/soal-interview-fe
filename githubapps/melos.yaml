@@ -1,0 +1,8 @@
+name: githubapps
+packages:
+  - features/**
+  - shared/**
+  - "*"
+scripts:
+  clean: flutter clean
+  get: flutter pub get

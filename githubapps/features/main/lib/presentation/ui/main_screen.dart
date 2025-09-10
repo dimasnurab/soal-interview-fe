@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:main/presentation/bloc/bloc/main_bloc.dart';
+import 'package:main/presentation/bloc/main/main_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MainScreen extends StatefulWidget {
