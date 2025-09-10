@@ -1,1 +1,1 @@
-enum ResultStateApi { done, fail, loading, initial }
+enum ResultStateApi { done, fail, loading, initial, notfound }

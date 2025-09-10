@@ -126,6 +126,9 @@ extension UserResponseMapper on UserResponse {
       publicRepos: publicRepos,
       followers: followers,
       following: following,
+      pathRepo: reposUrl,
+      email: email,
+      gistsUrl: gistsUrl,
     );
   }
 }

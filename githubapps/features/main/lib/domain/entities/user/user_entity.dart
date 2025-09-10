@@ -7,7 +7,9 @@ class UserEntity {
   final int? publicRepos;
   final int? followers;
   final int? following;
-
+  final String? pathRepo;
+  final String? email;
+  final String? gistsUrl;
   UserEntity({
     required this.login,
     required this.avatarUrl,
@@ -17,5 +19,8 @@ class UserEntity {
     required this.publicRepos,
     required this.followers,
     required this.following,
+    required this.pathRepo,
+    required this.email,
+    required this.gistsUrl,
   });
 }

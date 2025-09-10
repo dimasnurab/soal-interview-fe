@@ -12,7 +12,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   MainBloc({required this.usecase}) : super(MainState()) {
     on<MainEvent>((event, emit) async {
       if (event is ChangeBottomIndex) {
-        await _mapChangeIndexToState(event, emit);
+        _mapChangeIndexToState(event, emit);
       } else if (event is ChangeStatusState) {
         _mapChangeStatusToState(event, emit);
       }
@@ -31,11 +31,10 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     );
   }
 
-  Future<void> _mapChangeIndexToState(
+  void _mapChangeIndexToState(
     ChangeBottomIndex event,
     Emitter<MainState> emit,
-  ) async {
-    var r = await usecase.searchUsername(UserRequest(username: "dimasnurab"));
+  ) {
     emit(
       state.copyWith(
         isRefreshObject: !state.isRefreshObject,
