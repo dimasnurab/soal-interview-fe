@@ -10,6 +10,7 @@ abstract class MainUsecase {
   Future<UserEntity> searchUsername(UserRequest req);
   Future<List<RepoEntity>> getRepositoriesByUsername(RepoRequest req);
   Future<List<RepoEntity>> getStarredUrl(StaredRequest req);
+  Future<List<RepoEntity>> getTrendingRepo();
 }
 
 class MainUsecaseImpl extends MainUsecase {
@@ -28,4 +29,8 @@ class MainUsecaseImpl extends MainUsecase {
   @override
   Future<List<RepoEntity>> getStarredUrl(StaredRequest req) async =>
       await repo.getStarredUrl(req);
+
+  @override
+  Future<List<RepoEntity>> getTrendingRepo() async =>
+      await repo.getTrendingRepo();
 }

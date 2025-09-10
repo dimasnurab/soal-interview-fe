@@ -1,12 +1,10 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:main/domain/entities/repo/repo_entity.dart';
 import 'package:main/domain/entities/user/user_entity.dart';
 import 'package:main/presentation/bloc/search/search_bloc.dart';
 import 'package:shared/shared.dart';
-import 'package:shared/widget/debounce_textformfield.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -41,7 +39,7 @@ class _SearchFragmentState extends State<SearchFragment> {
               ),
               SizedBox(height: 30),
               _buildBody(state),
-
+              SizedBox(height: 20),
               Visibility(
                 visible: state.dataUser != null,
                 child: CustomTabBar(
@@ -78,7 +76,7 @@ class _SearchFragmentState extends State<SearchFragment> {
             : SingleChildScrollView(
                 child: Column(
                   children: state.itemsRepo
-                      .map((e) => _buildItemRepositories(e))
+                      .map((e) => RepositoryCard(repo: e))
                       .toList(),
                 ),
               );
@@ -88,7 +86,7 @@ class _SearchFragmentState extends State<SearchFragment> {
             : SingleChildScrollView(
                 child: Column(
                   children: state.itemsStarred
-                      .map((e) => _buildItemRepositories(e, isStarred: true))
+                      .map((e) => RepositoryCard(repo: e, isStarred: true))
                       .toList(),
                 ),
               );
@@ -202,120 +200,6 @@ class _SearchFragmentState extends State<SearchFragment> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildItemRepositories(RepoEntity e, {bool isStarred = false}) =>
-      Container(
-        margin: EdgeInsets.only(bottom: 10),
-        padding: EdgeInsets.all(14),
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          border: Border.all(color: ColorsApp.gray, width: 1.5),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    e.name ?? "",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: ColorsApp.blue,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    e.description ?? '',
-                    style: TextStyle(color: ColorsApp.gray, fontSize: 12),
-                  ),
-                  SizedBox(height: 20),
-                  Wrap(
-                    spacing: 2,
-                    runSpacing: 2,
-                    children: [
-                      _buildLang(e),
-                      Visibility(
-                        visible: isStarred,
-                        child: _buildRowIconText(
-                          icon: Icons.star_border,
-                          value: "${e.stargazersCount ?? 0}",
-                        ),
-                      ),
-                      Visibility(
-                        visible: isStarred,
-                        child: _buildRowIconText(
-                          icon: Icons.fork_left_outlined,
-                          value: "forks ${e.forksCount ?? 0}",
-                        ),
-                      ),
-                      Visibility(
-                        visible: isStarred,
-                        child: _buildRowIconText(
-                          value: 'Updated on ${e.updatedAt}',
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-              decoration: BoxDecoration(
-                border: Border.all(color: ColorsApp.gray, width: 1.5),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                isStarred
-                    ? "Star"
-                    : (e.isPrivate ?? false)
-                    ? "Private"
-                    : "Public",
-                style: TextStyle(fontSize: 11, color: ColorsApp.gray),
-              ),
-            ),
-          ],
-        ),
-      );
-
-  Widget _buildRowIconText({IconData? icon, required String value}) {
-    return Row(
-      children: [
-        icon == null ? SizedBox() : Icon(icon, size: 18, color: ColorsApp.gray),
-        Text(
-          value,
-          maxLines: 1,
-          style: TextStyle(color: ColorsApp.gray, fontSize: 12),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLang(RepoEntity e) {
-    return Row(
-      children: [
-        Container(
-          height: 10,
-          width: 10,
-          decoration: BoxDecoration(
-            color: e.language?.languageProgramColor,
-            shape: BoxShape.circle,
-          ),
-        ),
-        SizedBox(width: 10),
-        Text(
-          e.language ?? '',
-          style: TextStyle(color: ColorsApp.gray, fontSize: 12),
-        ),
-      ],
     );
   }
 }

@@ -20,6 +20,9 @@ dependencies:
   intl: ^0.20.2
   pretty_dio_logger: ^1.4.0
   shimmer: ^3.0.0
+  flutter_dotenv: ^6.0.0
+  main:
+    path: ../features/main
 dev_dependencies:
   flutter_test:
     sdk: flutter

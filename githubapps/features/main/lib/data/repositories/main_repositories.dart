@@ -12,6 +12,7 @@ abstract class MainRepositories {
   Future<UserEntity> searchUsername(UserRequest req);
   Future<List<RepoEntity>> getRepositoriesByUsername(RepoRequest req);
   Future<List<RepoEntity>> getStarredUrl(StaredRequest req);
+  Future<List<RepoEntity>> getTrendingRepo();
 }
 
 class MainRepositoriesImpl extends MainRepositories {
@@ -35,6 +36,12 @@ class MainRepositoriesImpl extends MainRepositories {
   @override
   Future<List<RepoEntity>> getStarredUrl(StaredRequest req) async {
     var r = await remoteDS.getStarredUrl(req);
+    return List<RepoEntity>.from(r.map((e) => e.toEntity()));
+  }
+
+  @override
+  Future<List<RepoEntity>> getTrendingRepo() async {
+    var r = await remoteDS.getTrendingRepo();
     return List<RepoEntity>.from(r.map((e) => e.toEntity()));
   }
 }

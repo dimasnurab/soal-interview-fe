@@ -12,3 +12,4 @@ export 'widget/cached_image_custom.dart';
 export 'widget/shimmer_card.dart';
 export 'widget/custom_tab_bar.dart';
 export 'widget/loading_indicator.dart';
+export 'widget/repos_card.dart';

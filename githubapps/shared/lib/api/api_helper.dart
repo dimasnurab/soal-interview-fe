@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:shared/api/constant.dart';
 
 import 'api_exception.dart';
 
@@ -48,6 +49,9 @@ class ApiHelper {
     String? username,
   }) async {
     try {
+      if (ConstantApp.token.isNotEmpty) {
+        dio.options.headers['Authorization'] = "token ${ConstantApp.token}";
+      }
       return await dio.request(
         path,
         queryParameters: queryParameters,

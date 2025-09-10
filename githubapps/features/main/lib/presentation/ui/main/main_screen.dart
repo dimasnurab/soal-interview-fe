@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:main/domain/usecases/main_usecase.dart';
+import 'package:main/presentation/bloc/home/home_bloc.dart';
 import 'package:main/presentation/bloc/main/main_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:main/presentation/bloc/search/search_bloc.dart';
@@ -55,7 +56,10 @@ class _MainScreenState extends State<MainScreen> {
         );
 
       default:
-        return HomeFragment();
+        return BlocProvider(
+          create: (context) => HomeBloc(usecase: Modular.get<MainUsecase>()),
+          child: HomeFragment(),
+        );
     }
   }
 }
