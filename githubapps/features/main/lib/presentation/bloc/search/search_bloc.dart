@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:main/data/models/repo/repo_request.dart';
+import 'package:main/data/models/stared/stared_request.dart';
 import 'package:main/data/models/users/user_request.dart';
 import 'package:main/domain/entities/repo/repo_entity.dart';
 import 'package:main/domain/entities/user/user_entity.dart';
@@ -16,6 +17,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   SearchBloc({required this.usecase}) : super(SearchState()) {
     on<DoSearchUsername>(_mapDoSearchUsernameToState);
     on<DoSearchRepositories>(_mapDoSearchRepositoriesToState);
+    on<DochangeTab>(_mapDoChangeTabToState);
+    on<DoGetStarred>(_mapDoGetStaredToState);
   }
 
   Future<void> _mapDoSearchUsernameToState(
@@ -67,6 +70,50 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       emit(
         state.copyWith(
           stateRepositories: ResultStateApi.fail,
+          errorMsg: e.message,
+          itemsRepo: [],
+        ),
+      );
+    }
+  }
+
+  void _mapDoChangeTabToState(DochangeTab event, Emitter<SearchState> emit) {
+    emit(
+      state.copyWith(
+        indexBodyTab: event.value,
+        isRefreshObject: !state.isRefreshObject,
+      ),
+    );
+
+    switch (event.value) {
+      case 0:
+        add(
+          DoSearchRepositories(
+            RepoRequest(path: state.dataUser?.pathRepo ?? '', size: 10),
+          ),
+        );
+        return;
+      case 1:
+        add(
+          DoGetStarred(StaredRequest(path: state.dataUser?.pathStarred ?? '')),
+        );
+        return;
+      default:
+    }
+  }
+
+  Future<void> _mapDoGetStaredToState(
+    DoGetStarred event,
+    Emitter<SearchState> emit,
+  ) async {
+    try {
+      emit(state.copyWith(stateStarred: ResultStateApi.loading));
+      var r = await usecase.getStarredUrl(event.request);
+      emit(state.copyWith(stateStarred: ResultStateApi.done, itemsStarred: r));
+    } on ApiException catch (e) {
+      emit(
+        state.copyWith(
+          stateStarred: ResultStateApi.fail,
           errorMsg: e.message,
           itemsRepo: [],
         ),

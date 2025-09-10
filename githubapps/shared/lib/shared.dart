@@ -10,3 +10,5 @@ export 'widget/custom_appbar.dart';
 export 'widget/debounce_textformfield.dart';
 export 'widget/cached_image_custom.dart';
 export 'widget/shimmer_card.dart';
+export 'widget/custom_tab_bar.dart';
+export 'widget/loading_indicator.dart';

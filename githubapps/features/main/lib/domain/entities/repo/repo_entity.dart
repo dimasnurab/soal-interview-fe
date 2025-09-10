@@ -12,7 +12,8 @@ class RepoEntity {
   final int? openIssuesCount;
   final String? defaultBranch;
   final String? ownerAvatarUrl;
-
+  final int? starredCount;
+  final String? updatedAt;
   RepoEntity({
     required this.id,
     required this.name,
@@ -27,5 +28,7 @@ class RepoEntity {
     required this.openIssuesCount,
     required this.defaultBranch,
     required this.ownerAvatarUrl,
+    required this.starredCount,
+    required this.updatedAt,
   });
 }

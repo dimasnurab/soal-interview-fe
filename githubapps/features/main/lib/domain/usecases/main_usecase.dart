@@ -3,11 +3,13 @@ import 'package:main/domain/entities/repo/repo_entity.dart';
 import 'package:main/domain/entities/user/user_entity.dart';
 
 import '../../data/models/repo/repo_request.dart';
+import '../../data/models/stared/stared_request.dart';
 import '../../data/repositories/main_repositories.dart';
 
 abstract class MainUsecase {
   Future<UserEntity> searchUsername(UserRequest req);
   Future<List<RepoEntity>> getRepositoriesByUsername(RepoRequest req);
+  Future<List<RepoEntity>> getStarredUrl(StaredRequest req);
 }
 
 class MainUsecaseImpl extends MainUsecase {
@@ -22,4 +24,8 @@ class MainUsecaseImpl extends MainUsecase {
   @override
   Future<List<RepoEntity>> getRepositoriesByUsername(RepoRequest req) async =>
       await repo.getRepositoriesByUsername(req);
+
+  @override
+  Future<List<RepoEntity>> getStarredUrl(StaredRequest req) async =>
+      await repo.getStarredUrl(req);
 }

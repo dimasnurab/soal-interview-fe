@@ -129,6 +129,7 @@ extension UserResponseMapper on UserResponse {
       pathRepo: reposUrl,
       email: email,
       gistsUrl: gistsUrl,
+      pathStarred: starredUrl,
     );
   }
 }

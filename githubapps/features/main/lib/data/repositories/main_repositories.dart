@@ -6,10 +6,12 @@ import 'package:main/domain/entities/user/user_entity.dart';
 
 import '../datasources/remote/main_remote_ds.dart';
 import '../models/repo/repo_request.dart';
+import '../models/stared/stared_request.dart' show StaredRequest;
 
 abstract class MainRepositories {
   Future<UserEntity> searchUsername(UserRequest req);
   Future<List<RepoEntity>> getRepositoriesByUsername(RepoRequest req);
+  Future<List<RepoEntity>> getStarredUrl(StaredRequest req);
 }
 
 class MainRepositoriesImpl extends MainRepositories {
@@ -27,6 +29,12 @@ class MainRepositoriesImpl extends MainRepositories {
   Future<List<RepoEntity>> getRepositoriesByUsername(RepoRequest req) async {
     var r = await remoteDS.getRepositoriesByUsername(req);
 
+    return List<RepoEntity>.from(r.map((e) => e.toEntity()));
+  }
+
+  @override
+  Future<List<RepoEntity>> getStarredUrl(StaredRequest req) async {
+    var r = await remoteDS.getStarredUrl(req);
     return List<RepoEntity>.from(r.map((e) => e.toEntity()));
   }
 }

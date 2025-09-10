@@ -10,6 +10,7 @@ class UserEntity {
   final String? pathRepo;
   final String? email;
   final String? gistsUrl;
+  final String? pathStarred;
   UserEntity({
     required this.login,
     required this.avatarUrl,
@@ -22,5 +23,6 @@ class UserEntity {
     required this.pathRepo,
     required this.email,
     required this.gistsUrl,
+    required this.pathStarred,
   });
 }

@@ -44,11 +44,13 @@ class _SearchFragmentState extends State<SearchFragment> {
 
               Visibility(
                 visible: state.dataUser != null,
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(14, 30, 0, 0),
-                  child: Row(children: [Text('Repositories')]),
+                child: CustomTabBar(
+                  tabs: ['Repositories', "star"],
+                  currentIndex: state.indexBodyTab,
+                  onTabChanged: (val) => _bloc.add(DochangeTab(val)),
                 ),
               ),
+              SizedBox(height: 30),
               Expanded(
                 child: Visibility(
                   visible: state.dataUser != null,
@@ -64,16 +66,9 @@ class _SearchFragmentState extends State<SearchFragment> {
   }
 
   Widget _buildBodyTab(SearchState state) {
-    if (state.stateRepositories == ResultStateApi.loading) {
-      return Center(
-        child: SizedBox(
-          height: 24,
-          width: 24,
-          child: Platform.isAndroid
-              ? CircularProgressIndicator()
-              : CupertinoActivityIndicator(),
-        ),
-      );
+    final loadingStates = [state.stateRepositories, state.stateStarred];
+    if (loadingStates.contains(ResultStateApi.loading)) {
+      return Center(child: LoadingIndicator());
     }
 
     switch (state.indexBodyTab) {
@@ -87,18 +82,33 @@ class _SearchFragmentState extends State<SearchFragment> {
                       .toList(),
                 ),
               );
+      case 1:
+        return state.itemsStarred.isEmpty
+            ? Center(child: Text("Data tidak ditemukan"))
+            : SingleChildScrollView(
+                child: Column(
+                  children: state.itemsStarred
+                      .map((e) => _buildItemRepositories(e, isStarred: true))
+                      .toList(),
+                ),
+              );
       default:
         return Container();
     }
   }
 
   Widget _buildBody(SearchState state) {
+    bool isFail = [
+      ResultStateApi.fail,
+      ResultStateApi.notfound,
+    ].contains(state.stateApi);
+
     Widget? child;
     if (state.stateApi == ResultStateApi.loading) {
       child = UserItemShimmer(key: ValueKey('shimmer_user'));
     } else if (state.stateApi == ResultStateApi.done) {
       child = _buildItem(state.dataUser);
-    } else if (state.stateApi == ResultStateApi.notfound) {
+    } else if (isFail) {
       child = Text(state.errorMsg, style: TextStyle(fontSize: 16));
     } else {
       child = Container();
@@ -195,69 +205,117 @@ class _SearchFragmentState extends State<SearchFragment> {
     );
   }
 
-  Widget _buildItemRepositories(RepoEntity e) => Container(
-    margin: EdgeInsets.only(bottom: 10),
-    padding: EdgeInsets.all(14),
-    width: MediaQuery.of(context).size.width,
-    decoration: BoxDecoration(
-      border: Border.all(color: ColorsApp.gray, width: 1.5),
-      borderRadius: BorderRadius.circular(6),
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                e.name ?? "",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: ColorsApp.blue,
-                ),
-              ),
-              SizedBox(height: 10),
-              Text(
-                e.description ?? '',
-                style: TextStyle(color: ColorsApp.gray, fontSize: 12),
-              ),
-              SizedBox(height: 20),
-              Row(
+  Widget _buildItemRepositories(RepoEntity e, {bool isStarred = false}) =>
+      Container(
+        margin: EdgeInsets.only(bottom: 10),
+        padding: EdgeInsets.all(14),
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          border: Border.all(color: ColorsApp.gray, width: 1.5),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    height: 10,
-                    width: 10,
-                    decoration: BoxDecoration(
-                      color: e.language?.languageProgramColor,
-                      shape: BoxShape.circle,
+                  Text(
+                    e.name ?? "",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: ColorsApp.blue,
                     ),
                   ),
-                  SizedBox(width: 10),
+                  SizedBox(height: 10),
                   Text(
-                    e.language ?? '',
+                    e.description ?? '',
                     style: TextStyle(color: ColorsApp.gray, fontSize: 12),
+                  ),
+                  SizedBox(height: 20),
+                  Wrap(
+                    spacing: 2,
+                    runSpacing: 2,
+                    children: [
+                      _buildLang(e),
+                      Visibility(
+                        visible: isStarred,
+                        child: _buildRowIconText(
+                          icon: Icons.star_border,
+                          value: "${e.stargazersCount ?? 0}",
+                        ),
+                      ),
+                      Visibility(
+                        visible: isStarred,
+                        child: _buildRowIconText(
+                          icon: Icons.fork_left_outlined,
+                          value: "forks ${e.forksCount ?? 0}",
+                        ),
+                      ),
+                      Visibility(
+                        visible: isStarred,
+                        child: _buildRowIconText(
+                          value: 'Updated on ${e.updatedAt}',
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              decoration: BoxDecoration(
+                border: Border.all(color: ColorsApp.gray, width: 1.5),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                isStarred
+                    ? "Star"
+                    : (e.isPrivate ?? false)
+                    ? "Private"
+                    : "Public",
+                style: TextStyle(fontSize: 11, color: ColorsApp.gray),
+              ),
+            ),
+          ],
         ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-          decoration: BoxDecoration(
-            border: Border.all(color: ColorsApp.gray, width: 1.5),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text(
-            (e.isPrivate ?? false) ? "Private" : "Public",
-            style: TextStyle(fontSize: 11, color: ColorsApp.gray),
-          ),
+      );
+
+  Widget _buildRowIconText({IconData? icon, required String value}) {
+    return Row(
+      children: [
+        icon == null ? SizedBox() : Icon(icon, size: 18, color: ColorsApp.gray),
+        Text(
+          value,
+          maxLines: 1,
+          style: TextStyle(color: ColorsApp.gray, fontSize: 12),
         ),
       ],
-    ),
-  );
+    );
+  }
+
+  Widget _buildLang(RepoEntity e) {
+    return Row(
+      children: [
+        Container(
+          height: 10,
+          width: 10,
+          decoration: BoxDecoration(
+            color: e.language?.languageProgramColor,
+            shape: BoxShape.circle,
+          ),
+        ),
+        SizedBox(width: 10),
+        Text(
+          e.language ?? '',
+          style: TextStyle(color: ColorsApp.gray, fontSize: 12),
+        ),
+      ],
+    );
+  }
 }

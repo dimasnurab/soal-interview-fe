@@ -1,4 +1,5 @@
 import '../../../domain/entities/repo/repo_entity.dart' show RepoEntity;
+import 'package:intl/intl.dart';
 
 class RepoResponse {
   final int? id;
@@ -14,6 +15,7 @@ class RepoResponse {
   final int? openIssuesCount;
   final String? defaultBranch;
   final String? ownerAvatarUrl;
+  final DateTime? updatedAt;
 
   RepoResponse({
     required this.id,
@@ -29,6 +31,7 @@ class RepoResponse {
     required this.openIssuesCount,
     required this.defaultBranch,
     required this.ownerAvatarUrl,
+    required this.updatedAt,
   });
 
   factory RepoResponse.fromJson(Map<String, dynamic> json) {
@@ -46,6 +49,9 @@ class RepoResponse {
       openIssuesCount: json['open_issues_count'],
       defaultBranch: json['default_branch'],
       ownerAvatarUrl: json['owner']?['avatar_url'] ?? '',
+      updatedAt: json['updated_at'] == null
+          ? null
+          : DateTime.parse(json['updated_at']),
     );
   }
 }
@@ -66,6 +72,10 @@ extension RepoResponseMapper on RepoResponse {
       openIssuesCount: openIssuesCount,
       defaultBranch: defaultBranch,
       ownerAvatarUrl: ownerAvatarUrl,
+      starredCount: stargazersCount,
+      updatedAt: updatedAt != null
+          ? DateFormat('dd MMM yyyy').format(updatedAt!)
+          : null,
     );
   }
 }
